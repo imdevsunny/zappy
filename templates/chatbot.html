@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Chatbot
+{% endblock title %}
+
+{% block body %}
+<div class="container d-flex justify-content-center my-5">
+  <div class="chatBot_main shadow-lg mt-2 mb-5 wow fadeInLeft" data-wow-delay="0.1s">
+    <!-- Chatbot header -->
+    <div class="d-flex justify-content-center align-items-center p-3 adiv bg-dark text-white">
+      <span class="d-flex align-items-center fs-5">{{chatbot.name}} | {{chatbot.role}}</span>
+    </div>
+
+    <!-- Chat window with scrollable messages -->
+    <div class="chat-window p-3" id="chatWindow">
+      <!-- Chatbot message -->
+      <div class="d-flex flex-row px-1">
+        <img src="{% static 'img/chatbot.png' %}" width="30" height="30" class="rounded">
+        <div class="chat ms-1 p-2 ">
+          Hi, how can I help you?
+          <small class="d-block text-end text-muted text-light p-0" style="color: #ffffff;">
+            <div id="currentTime" class="text-secondary"></div>
+        </small> <!-- Time for user message -->
+          
+        </div>
+      </div>
+
+      <!-- User message with image aligned above baseline and right margin -->
+      <!-- <div class="d-flex flex-row justify-content-end  p-2">
+          <div class="bg-user-msg mr-0 me-0 p-3 text-white ">Hello and thank you for visiting birdlymind. Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum saepe omnis cum quisquam ex iure natus maxime maiores, tempore doloremque! Ducimus, unde ipsa! Dicta, rem totam dolores laudantium sint at?</div>
+        <img src="https://img.icons8.com/color/48/000000/circled-user-male-skin-type-7.png" width="30" height="30" class="user-img align-self-end ms-2">
+      </div> -->
+
+      <!-- Chatbot typing... -->
+      <!-- <div id="loader" class="d-flex flex-row p-2">
+        <img src="{% static 'img/chatbot.png' %}" width="30" height="30" class="rounded">
+        <div class="chat ml-2 p-3 bg-white"><div class="loader"></div></div>
+      </div> -->
+    </div>
+
+    <!-- Input field at the bottom -->
+    <div class="form-group p-3">
+      <div class="input-group position-relative"> 
+        <textarea id="user-input" class="form-control py-2 border-0 rounded-end" placeholder="Type something..."  rows="1"></textarea>
+        <button id="send-btn"  class="btn btn-send bg-white position-absolute end-0 top-50 translate-middle-y border-0" type="button">
+            <img src="{% static 'img/send-message.png' %}" width="24" height="24" alt="Send">
+        </button>
+    </div>
+    
+    
+    
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentTime = formatAMPM(new Date());
+  document.getElementById('currentTime').innerHTML = currentTime;
+
+  function formatAMPM(date) {
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      const strTime = hours + ':' + minutes + ' ' + ampm;
+      return strTime;
+  }
+
+  function sendMessage() {
+      let userInput = document.getElementById('user-input').value;
+      console.log(userInput, "userInput")
+      console.log(currentTime)
+      if (userInput.trim() === "") {
+          alert('Please enter a message');
+          return;
+      }
+      let userMessageTime = formatAMPM(new Date());
+      // document.getElementById('currentTime').innerHTML = currentTime;
+      // document.getElementById('currentTime').innerHTML = currentTime;
+      console.log("I am hereererererawerwaerwqerwerwer")
+      // Append user message to the chat with the time
+      let chatBody = document.getElementById('chatWindow');
+      chatBody.innerHTML += `
+          <div class="d-flex flex-row justify-content-end  px-1">
+          <div class="bg-user-msg mr-0 me-0 mx-1 text-white ">${userInput}
+            <small class="d-block text-end text-muted text-light" style="color: #ffffff;">
+                      <div class="text-white">${userMessageTime}</div>
+                  </small> <!-- Time for user message --></div>
+        <img src="https://img.icons8.com/color/48/000000/circled-user-male-skin-type-7.png" width="30" height="30" class="user-img align-self-end">
+      </div>
+      `;
+
+      // Scroll to the bottom of chat body
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      // Clear input
+      document.getElementById('user-input').value = "";
+
+      // Show loader while waiting for response
+      chatBody.innerHTML += `
+          <div id="loader" class="d-flex flex-row px-1">
+        <img src="{% static 'img/chatbot.png' %}" width="30" height="30" class="rounded">
+        <div class="chat ms-1 p-2"><div class="loader"></div></div>
+      </div>
+      `;
+
+      // Make a POST request to send the message
+      fetch('/chatbot-response/?chatbot_name="{{chatbot.name}}"&role="{{chatbot.role}}"&personality="{{chatbot.personality}}"', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': '{{ csrf_token }}' // Ensure CSRF token is passed in Django
+          },
+          body: JSON.stringify({
+              message: userInput
+          })
+      })
+      .then(response => response.json())
+      .then(data => {
+          // Remove the loader
+          document.getElementById('loader').remove();
+
+          // Get current time for bot response
+          let botTime = formatAMPM(new Date());
+          console.log(data?.response)
+          // Append bot response to the chat with chatbot's name and time
+          chatBody.innerHTML += `
+
+              <div class="d-flex flex-row px-1">
+        <img src="{% static 'img/chatbot.png' %}" width="30" height="30" class="rounded">
+        <div class="chat ms-1 p-2">
+          ${data.response}
+           <small class="d-block text-end text-muted">${botTime}</small>
+        </div>
+      </div>
+          `;
+
+          // Scroll to the bottom of chat body
+          chatBody.scrollTop = chatBody.scrollHeight;
+      })
+      .catch(error => {
+          console.error('Error:', error);
+
+          // Remove the loader
+          document.getElementById('loader').remove();
+
+          // Show error message
+          chatBody.innerHTML += `
+              <div class="d-flex flex-row px-1">
+        <img src="{% static 'img/chatbot.png' %}" width="30" height="30" class="rounded">
+        <div class="chat ms-1 p-2 ">
+          Sorry, I won't be able to answer your query at this moment.
+          <small class="d-block text-end text-muted text-light p-0" style="color: #ffffff;">
+            <div id="currentTime" class="text-secondary"></div>
+        </small> <!-- Time for user message -->
+          
+        </div>
+      </div>
+            
+          `;
+      });
+  }
+
+  // Send message on button click
+  document.getElementById('send-btn').addEventListener('click', sendMessage);
+
+  // Send message on pressing 'Enter' key
+  document.getElementById('user-input').addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+          event.preventDefault(); // Prevent form submission if applicable
+          sendMessage();
+      }
+  });
+</script>
+
+{% endblock body %}

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Home
+{% endblock title %}
+    
+{% block body %}
+
+<div class="container-fluid service py-2">
+    <div class="container py-2 mb-5">
+        <div class="d-flex justify-content-between align-items-center mx-auto p-4 my-2 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 1200px;">
+    
+            <!-- Left-aligned Projects Heading -->
+            <h3 class="ms-0 ps-0 mt-0">Projects</h3>
+        
+            <!-- Right-aligned Search and Create Button -->
+            <div class="d-flex align-items-center">
+                <!-- Search Bar and Button Container -->
+                <div class="position-relative me-3">
+                    <form method="GET" >
+                        <input class="form-control rounded-pill py-3 ps-4 pe-5" type="text" placeholder="Search" name="search">
+                        <button type="submit" class="btn btn-dark rounded-pill position-absolute top-0 end-0 py-2 mt-2 me-2">
+                            <i class="fas fa-search me-1"></i> Search
+                        </button>
+                    </form>
+                </div>
+                
+                
+                <!-- Create Button -->
+                <button onclick=window.location.href="{% url 'new_bot' %}" type="button" class="btn btn-primary rounded-pill py-3 px-4 d-flex align-items-center">
+                    <i class="fas fa-plus me-2"></i> Create
+                </button>
+            </div>
+        </div>
+        
+        
+        
+        <div class="row g-4 justify-content-center text-center">
+            
+            {% if chatbots %}
+
+            {% for chatbot in chatbots %}
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="service-item bg-light rounded">
+                    <div class="service-img">
+                        <img src="{% static 'img/chatbot.png' %} " class="img-fluid w-100 rounded-top" alt="">
+                    </div>
+                    <div class="service-content text-center p-4">
+                        <div class="service-content-inner">
+                            <a href="#" class="h4 mb-4 d-inline-flex text-start">
+                                <!-- <i class="fas fa-donate fa-2x me-2"></i>  -->
+                                {{chatbot.name}}</a>
+                            <p class="mb-4">{{chatbot.role}} | {{chatbot.personality}}
+                            </p>
+                            <a class="btn btn-light rounded-pill py-2 px-4" href="{% url 'chatbot' chatbot.id %}">Start Chat</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+                
+            {% endif %}
+                
+            
+            <!-- <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="service-item bg-light rounded">
+                    <div class="service-img">
+                        <img src="{% static 'img/service-2.jpg' %} " class="img-fluid w-100 rounded-top" alt="">
+                    </div>
+                    <div class="service-content text-center p-4">
+                        <div class="service-content-inner">
+                            <a href="#" class="h4 mb-4 d-inline-flex text-start"><i class="fas fa-donate fa-2x me-2"></i> Consultancy & Advice</a>
+                            <p class="mb-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Earum nobis est sapiente natus officiis maxime
+                            </p>
+                            <a class="btn btn-light rounded-pill py-2 px-4" href="#">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="service-item bg-light rounded">
+                    <div class="service-img">
+                        <img src="{% static 'img/service-4.jpg' %} " class="img-fluid w-100 rounded-top" alt="">
+                    </div>
+                    <div class="service-content text-center p-4">
+                        <div class="service-content-inner">
+                            <a href="#" class="h4 mb-4 d-inline-flex text-start"><i class="fas fa-donate fa-2x me-2"></i> Invesments Planning</a>
+                            <p class="mb-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Earum nobis est sapiente natus officiis maxime
+                            </p>
+                            <a class="btn btn-light rounded-pill py-2 px-4" href="#">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.7s">
+                <div class="service-item bg-light rounded">
+                    <div class="service-img">
+                        <img src="{% static 'img/service-3.jpg' %} " class="img-fluid w-100 rounded-top" alt="">
+                    </div>
+                    <div class="service-content text-center p-4">
+                        <div class="service-content-inner">
+                            <a href="#" class="h4 mb-4 d-inline-flex text-start"><i class="fas fa-donate fa-2x me-2"></i> Private Client Investment</a>
+                            <p class="mb-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Earum nobis est sapiente natus officiis maxime
+                            </p>
+                            <a class="btn btn-light rounded-pill py-2 px-4" href="#">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <!-- <div class="col-12">
+                <a class="btn btn-primary rounded-pill py-3 px-5 wow fadeInUp" data-wow-delay="0.1s" href="#">More Chatbots</a>
+            </div> -->
+        </div>
+    </div>
+</div>
+{% endblock body %}
+    

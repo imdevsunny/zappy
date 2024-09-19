@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Create Bot
+{% endblock title %}
+    
+{% block body %}
+
+<div class="container-fluid contact bg-light py-4">
+    <div class="container py-5">
+        <h3 class="ms-0 ps-0 mt-0">Projects / Create</h3>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-6 wow fadeInRight" data-wow-delay="0.3s">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-3 mt-4">
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="name" placeholder="John" name="name" required>
+                                <label for="name">Name</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <select class="form-control create-bot" id="model" name="model" required>
+                                    <option selected>Select Model</option>
+                                    {% if models %}
+                                    {% for model in models %}
+                                    <option value="{{ model.0 }}">{{ model.0 }}</option>
+                                    {% endfor %}
+                                    {% endif %}
+                                </select>
+                                <label for="model">Model</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <select class="form-control create-bot" id="role" name="role" required>
+                                    <option value="" disabled selected>Select Role of Chatbot</option>
+                                    {% if roles %}
+                                    {% for role in roles %}
+                                    <option value="{{ role.0 }}">{{ role.0 }}</option>
+                                    {% endfor %}
+                                    {% endif %}
+                                </select>
+                                <label for="role">Role of Chatbot</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <select class="form-control create-bot" id="personality" name="personality" required>
+                                    <option value="" disabled selected>Select Personality</option>
+                                    {% if personalities %}
+                                    {% for personality in personalities %}
+                                    <option value="{{ personality.0 }}">{{ personality.0 }}</option>
+                                    {% endfor %}
+                                    {% endif %}
+                                </select>
+                                    <!-- Add more personality types as needed -->
+                                </select>
+                                <label for="personality">Personality</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <input type="file" class="form-floating form-control create-bot" id="image" placeholder="image" name="bot_image" accept="image/png, image/gif, image/jpeg" />
+                            <!-- <div class="form-floating">
+                            </div> -->
+                            <label for="image" style="font-size: 14px; color: #818181; padding-left: 11px;">Bot Image (optional)</label> 
+                        </div>
+                        <!-- <div class="col-12">
+                            <div class="custom-file-upload">
+                                <label for="image" class="custom-upload-label">Choose File</label>
+                                <input type="file" id="image" name="bot_image" class="custom-file-input" />
+                                <span class="custom-file-text">No file chosen</span>
+                            </div>
+                        </div> -->
+                        
+                        <div class="col-12 my-4">
+                            <button type="submit" class="btn btn-primary w-100 py-3">Create</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}
+    
